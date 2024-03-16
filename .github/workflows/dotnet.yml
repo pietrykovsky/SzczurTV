@@ -19,20 +19,20 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    # Setup .NET SDK
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{ matrix.dotnet-version }}
+        dotnet-version: '8.0.x'
 
-    - name: Install CSharpier
-      run: dotnet tool install -g csharpier
+    - name: Restore .NET tools
+      run: dotnet tool restore
 
-    - name: Add .NET global tools to PATH
-      run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+    - name: Add .NET tools to PATH
+      run: echo "$PWD/.dotnet/tools" >> $GITHUB_PATH
 
     - name: Restore dependencies
-      run: dotnet restore
-      working-directory: SzczurTv
+      run: dotnet restore SzczurTv/SzczurTv.sln
 
     - name: Check formatting with CSharpier
       run: dotnet csharpier --check .
