@@ -34,7 +34,7 @@ jobs:
       working-directory: SzczurTv
 
     - name: Check formatting with CSharpier
-      run: csharpier --check
+      run: dotnet csharpier --check .
       working-directory: SzczurTv
 
     - name: Lint with dotnet format
