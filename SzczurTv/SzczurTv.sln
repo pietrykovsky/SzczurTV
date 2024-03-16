@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SzczurApp", "SzczurApp\SzczurApp.csproj", "{23539C8B-2AAA-4D19-9C2C-FB106FE7F7DC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SzczurTests", "SzczurTests\SzczurTests.csproj", "{D5698F47-7E23-4E2B-921E-E23D0E5429FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{23539C8B-2AAA-4D19-9C2C-FB106FE7F7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23539C8B-2AAA-4D19-9C2C-FB106FE7F7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23539C8B-2AAA-4D19-9C2C-FB106FE7F7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23539C8B-2AAA-4D19-9C2C-FB106FE7F7DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5698F47-7E23-4E2B-921E-E23D0E5429FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5698F47-7E23-4E2B-921E-E23D0E5429FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5698F47-7E23-4E2B-921E-E23D0E5429FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5698F47-7E23-4E2B-921E-E23D0E5429FA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
