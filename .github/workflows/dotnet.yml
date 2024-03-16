@@ -23,21 +23,29 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
 
-    - name: Restore dependencies
-      run: dotnet restore SzczurTv/SzczurTv.sln
-      working-directory: ./
-      
     - name: Install CSharpier
       run: dotnet tool install -g csharpier
 
+    - name: Add .NET global tools to PATH
+      run: echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+
+    - name: Restore dependencies
+      run: dotnet restore
+      working-directory: SzczurTv
+
     - name: Check formatting with CSharpier
       run: csharpier --check
+      working-directory: SzczurTv
 
     - name: Lint with dotnet format
       run: dotnet format --verify-no-changes --verbosity diagnostic
+      working-directory: SzczurTv
 
     - name: Build
       run: dotnet build --no-restore
+      working-directory: SzczurTv
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
+      working-directory: SzczurTv
+
