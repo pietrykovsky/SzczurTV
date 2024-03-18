@@ -1,2 +1,2 @@
-# Szczur-Tv
+# SzczurTV
 A streaming application based on Twitch
