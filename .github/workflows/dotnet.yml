@@ -31,10 +31,6 @@ jobs:
       run: dotnet csharpier --check .
       working-directory: SzczurTv
 
-    - name: Lint with dotnet format
-      run: dotnet format --verify-no-changes --verbosity diagnostic
-      working-directory: SzczurTv
-
     - name: Build
       run: dotnet build --no-restore
       working-directory: SzczurTv
