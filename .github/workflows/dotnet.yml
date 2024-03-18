@@ -29,6 +29,7 @@ jobs:
 
     - name: Restore NuGet packages
       run: dotnet restore
+      working-directory: SzczurTv
 
     - name: Check formatting with CSharpier
       run: dotnet csharpier --check .
