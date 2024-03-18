@@ -24,9 +24,6 @@ jobs:
       with:
         dotnet-version: ${{ matrix.dotnet-version }}
 
-    - name: Restore .NET tools
-      run: dotnet tool restore
-
     - name: Check formatting with CSharpier
       run: dotnet csharpier --check .
       working-directory: SzczurTv
