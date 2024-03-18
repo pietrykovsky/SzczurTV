@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  # #For future development
+  # db:
+  #   image: postgres
+  #   restart: always
+  #   environment:
+  #     POSTGRES_PASSWORD: example
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "5057:8080"
+    volumes:
+      - ./dataprotectionkeys:/root/.aspnet/DataProtection-Keys
+    # depends_on:
+    #   - db
