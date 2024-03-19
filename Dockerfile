@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:latest as build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 as build
 
 # Copy the entire SzczurTv solution directory
 COPY SzczurTv /SzczurTv
