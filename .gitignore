@@ -7,6 +7,8 @@
 # dotenv files
 .env
 
+.vscode/
+
 # User-specific files
 *.rsuser
 *.suo
@@ -483,3 +485,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Key for running dotnet app in docker
+dataprotectionkeys/
