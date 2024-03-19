@@ -1,7 +1,5 @@
 version: '3.8'
-
 services:
-  # #For future development
   # db:
   #   image: postgres
   #   restart: always
@@ -13,10 +11,16 @@ services:
   app:
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     ports:
-      - "5057:8080"
+      - "8080:8080"
     volumes:
       - ./dataprotectionkeys:/root/.aspnet/DataProtection-Keys
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # - ConnectionStrings__Default=Server=db;Port=5432;Database=myDatabase;User Id=postgres;Password=example;
     # depends_on:
     #   - db
+
+# volumes:
+#   postgres-data:
