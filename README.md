@@ -19,7 +19,7 @@ This command builds the images if they do not exist and starts the containers.
 `docker-compose down`
 This command stops and removes the containers, networks, volumes, and images created by `up`.
 
-# Running the Application
+## Running the Application
 
 After successfully starting the containers using `docker-compose up --build`, you can access the SzczurTV application by opening your web browser and navigating to:
 `http://localhost:8080`
