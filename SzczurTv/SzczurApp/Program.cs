@@ -1,5 +1,5 @@
 using SzczurApp.Components;
-
+using Npgsql;
 internal class Program
 {
     private static void Main(string[] args)
@@ -27,5 +27,19 @@ internal class Program
         app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 
         app.Run();
+    }
+
+    private static void ExecuteSimpleQuery()
+    {
+        var connectionString = "Host=myHost;Database=myDb;Username=myUser;Password=myPassword";
+        using (var connection = new NpgsqlConnection(connectionString))
+        {
+            connection.Open();
+            using (var command = new NpgsqlCommand("SELECT NOW()", connection))
+            {
+                var now = command.ExecuteScalar();
+                Console.WriteLine($"Current time: {now}");
+            }
+        }
     }
 }
