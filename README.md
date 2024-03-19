@@ -19,8 +19,13 @@ This command builds the images if they do not exist and starts the containers.
 `docker-compose down`
 This command stops and removes the containers, networks, volumes, and images created by `up`.
 
+# Running the Application
+
+After successfully starting the containers using `docker-compose up --build`, you can access the SzczurTV application by opening your web browser and navigating to:
+`http://localhost:8080`
+
 ## Code Formatting
 
-Before making any commit, ensure your C# code is properly formatted to pass the formatting checks. Use the CSharpier formatter by running the following command in the root directory of the project:
+Before making any commit, ensure your C# code is properly formatted to pass the formatting checks with the following command:
 `dotnet csharpier .`
-This command checks the formatting of all C# files in the project. This step is crucial to ensure your commits adhere to the project's coding standards and pass the automated formatting checks.`
+
