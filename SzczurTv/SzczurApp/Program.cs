@@ -1,5 +1,6 @@
-using SzczurApp.Components;
 using Npgsql;
+using SzczurApp.Components;
+
 internal class Program
 {
     private static void Main(string[] args)
