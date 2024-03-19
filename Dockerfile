@@ -11,7 +11,7 @@ RUN dotnet restore
 # Build the solution
 RUN dotnet publish -c Debug -o /app --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:latest as runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 as runtime
 WORKDIR /app
 COPY --from=build /app ./
 EXPOSE 80
