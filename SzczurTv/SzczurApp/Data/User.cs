@@ -23,5 +23,5 @@ namespace SzczurApp.Data.Models
         public string PasswordHash { get; set; }
 
         public DateTime DateOfBirth { get; set; }
-    }    
+    }
 }

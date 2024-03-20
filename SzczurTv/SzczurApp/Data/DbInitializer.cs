@@ -15,10 +15,22 @@ namespace SzczurApp.Data
 
             var users = new User[]
             {
-                new User{Username="Ben10", Email="ben@ben.ben", PasswordHash="ben10", DateOfBirth=DateTime.Parse("2001-04-20")},
-                new User{Username="admin", Email="admin@example.com", PasswordHash="admin", DateOfBirth=DateTime.Parse("2000-01-01")}
+                new User
+                {
+                    Username = "Ben10",
+                    Email = "ben@ben.ben",
+                    PasswordHash = "ben10",
+                    DateOfBirth = DateTime.Parse("2001-04-20")
+                },
+                new User
+                {
+                    Username = "admin",
+                    Email = "admin@example.com",
+                    PasswordHash = "admin",
+                    DateOfBirth = DateTime.Parse("2000-01-01")
+                }
             };
-            
+
             context.Users.AddRange(users);
             context.SaveChanges();
         }

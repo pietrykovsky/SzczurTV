@@ -13,11 +13,13 @@ internal class Program
 
         // Configure EF Core with PostgreSQL
         // Build the connection string from environment variables
-        var connectionString = $"Host={builder.Configuration["POSTGRES_HOST"]};Database={builder.Configuration["POSTGRES_DB"]};Username={builder.Configuration["POSTGRES_USER"]};Password={builder.Configuration["POSTGRES_PASSWORD"]}";
+        var connectionString =
+            $"Host={builder.Configuration["POSTGRES_HOST"]};Database={builder.Configuration["POSTGRES_DB"]};Username={builder.Configuration["POSTGRES_USER"]};Password={builder.Configuration["POSTGRES_PASSWORD"]}";
 
         // Add DbContext to the DI container
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(connectionString));
+            options.UseNpgsql(connectionString)
+        );
 
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -44,7 +46,6 @@ internal class Program
                 DbInitializer.Initialize(context);
             }
         }
-
 
         app.UseHttpsRedirection();
 

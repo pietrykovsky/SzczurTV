@@ -17,7 +17,8 @@ namespace SzczurApp.Migrations
                 type: "date",
                 nullable: false,
                 oldClrType: typeof(DateTime),
-                oldType: "timestamp with time zone");
+                oldType: "timestamp with time zone"
+            );
         }
 
         /// <inheritdoc />
@@ -29,7 +30,8 @@ namespace SzczurApp.Migrations
                 type: "timestamp with time zone",
                 nullable: false,
                 oldClrType: typeof(DateTime),
-                oldType: "date");
+                oldType: "date"
+            );
         }
     }
 }
