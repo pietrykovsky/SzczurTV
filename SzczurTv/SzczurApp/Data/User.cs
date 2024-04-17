@@ -11,16 +11,16 @@ namespace SzczurApp.Data.Models
 
         [Required]
         [StringLength(100)]
-        public string Username { get; set; }
+        public string? Username { get; set; }
 
         [Required]
         [StringLength(255)]
         [EmailAddress]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [Required]
         [StringLength(255)]
-        public string PasswordHash { get; set; }
+        public string? PasswordHash { get; set; }
 
         public DateTime DateOfBirth { get; set; }
     }
