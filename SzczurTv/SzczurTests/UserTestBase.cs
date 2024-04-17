@@ -17,7 +17,7 @@ public abstract class UserTestBase : IDisposable
         _connection.Open();
 
         Options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite(_connection)  // Configure the context to use SQLite in-memory
+            .UseSqlite(_connection) // Configure the context to use SQLite in-memory
             .Options;
 
         // Ensure the database is created

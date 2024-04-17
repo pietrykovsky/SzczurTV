@@ -10,7 +10,13 @@ public class UserModelTests : UserTestBase
     {
         using (var context = CreateContext())
         {
-            var user = new User { Username = "newuser", Email = "newuser@example.com", PasswordHash = "securehash", DateOfBirth = DateTime.UtcNow };
+            var user = new User
+            {
+                Username = "newuser",
+                Email = "newuser@example.com",
+                PasswordHash = "securehash",
+                DateOfBirth = DateTime.UtcNow
+            };
             context.Users.Add(user);
             context.SaveChanges();
 
@@ -22,9 +28,19 @@ public class UserModelTests : UserTestBase
     [InlineData("", "email@example.com", "hash")] // Empty username
     [InlineData("username", "", "hash")] // Empty email
     [InlineData("username", "notanemail", "hash")] // Invalid email format
-    public void Create_InvalidUser_ShouldFailValidation(string username, string email, string password)
+    public void Create_InvalidUser_ShouldFailValidation(
+        string username,
+        string email,
+        string password
+    )
     {
-        var user = new User { Username = username, Email = email, PasswordHash = password, DateOfBirth = DateTime.UtcNow };
+        var user = new User
+        {
+            Username = username,
+            Email = email,
+            PasswordHash = password,
+            DateOfBirth = DateTime.UtcNow
+        };
         List<ValidationResult> results;
         bool isValid = ValidateModel(user, out results);
 
@@ -37,7 +53,13 @@ public class UserModelTests : UserTestBase
     {
         using (var context = CreateContext())
         {
-            var user = new User { Username = "readuser", Email = "readuser@example.com", PasswordHash = "readhash", DateOfBirth = DateTime.UtcNow };
+            var user = new User
+            {
+                Username = "readuser",
+                Email = "readuser@example.com",
+                PasswordHash = "readhash",
+                DateOfBirth = DateTime.UtcNow
+            };
             context.Users.Add(user);
             context.SaveChanges();
 
@@ -62,7 +84,13 @@ public class UserModelTests : UserTestBase
     {
         using (var context = CreateContext())
         {
-            var user = new User { Username = "updateuser", Email = "updateuser@example.com", PasswordHash = "updatehash", DateOfBirth = DateTime.UtcNow };
+            var user = new User
+            {
+                Username = "updateuser",
+                Email = "updateuser@example.com",
+                PasswordHash = "updatehash",
+                DateOfBirth = DateTime.UtcNow
+            };
             context.Users.Add(user);
             context.SaveChanges();
 
@@ -80,7 +108,13 @@ public class UserModelTests : UserTestBase
     {
         using (var context = CreateContext())
         {
-            var user = new User { Username = "deleteuser", Email = "deleteuser@example.com", PasswordHash = "deletehash", DateOfBirth = DateTime.UtcNow };
+            var user = new User
+            {
+                Username = "deleteuser",
+                Email = "deleteuser@example.com",
+                PasswordHash = "deletehash",
+                DateOfBirth = DateTime.UtcNow
+            };
             context.Users.Add(user);
             context.SaveChanges();
 
