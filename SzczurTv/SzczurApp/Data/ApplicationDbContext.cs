@@ -1,22 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using SzczurApp.Data.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-namespace SzczurApp.Data
-{
-    public class ApplicationDbContext : DbContext
-    {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { }
+namespace SzczurApp.Data;
 
-        public DbSet<User> Users { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<User>(entity =>
-            {
-                // Configure the DateOfBirth column to use the PostgreSQL 'date' type
-                entity.Property(e => e.DateOfBirth).HasColumnType("date");
-            });
-        }
-    }
-}
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<ApplicationUser>(options) { }
