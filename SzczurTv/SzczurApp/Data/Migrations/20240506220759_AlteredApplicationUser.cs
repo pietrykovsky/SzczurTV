@@ -20,7 +20,8 @@ namespace SzczurApp.Migrations
                 oldClrType: typeof(string),
                 oldType: "character varying(256)",
                 oldMaxLength: 256,
-                oldNullable: true);
+                oldNullable: true
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "Email",
@@ -32,7 +33,8 @@ namespace SzczurApp.Migrations
                 oldClrType: typeof(string),
                 oldType: "character varying(256)",
                 oldMaxLength: 256,
-                oldNullable: true);
+                oldNullable: true
+            );
         }
 
         /// <inheritdoc />
@@ -46,7 +48,8 @@ namespace SzczurApp.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "character varying(256)",
-                oldMaxLength: 256);
+                oldMaxLength: 256
+            );
 
             migrationBuilder.AlterColumn<string>(
                 name: "Email",
@@ -56,7 +59,8 @@ namespace SzczurApp.Migrations
                 nullable: true,
                 oldClrType: typeof(string),
                 oldType: "character varying(256)",
-                oldMaxLength: 256);
+                oldMaxLength: 256
+            );
         }
     }
 }

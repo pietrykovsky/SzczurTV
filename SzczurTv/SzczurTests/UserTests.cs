@@ -27,7 +27,11 @@ namespace SzczurTests.Users
         [InlineData("", "email@example.com", "hash")] // Empty username
         [InlineData("username", "", "hash")] // Empty email
         [InlineData("username", "notanemail", "hash")] // Invalid email format
-        public void Create_InvalidUser_ShouldFailValidation(string username, string email, string password)
+        public void Create_InvalidUser_ShouldFailValidation(
+            string username,
+            string email,
+            string password
+        )
         {
             var user = new ApplicationUser
             {
@@ -67,7 +71,9 @@ namespace SzczurTests.Users
         {
             using (var context = CreateContext())
             {
-                var retrievedUser = context.Users.FirstOrDefault(u => u.UserName == "nonexistentuser");
+                var retrievedUser = context.Users.FirstOrDefault(u =>
+                    u.UserName == "nonexistentuser"
+                );
                 Assert.Null(retrievedUser);
             }
         }
