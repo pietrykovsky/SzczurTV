@@ -5,3 +5,29 @@
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<!-- Video.js CSS -->
+<link href="https://vjs.zencdn.net/7.8.4/video-js.css" rel="stylesheet">
+
+<!-- Your view content starts here -->
+<div class="container">
+    <h2>Test M3U8.</h2>
+    <div>
+        <video id="my-video" class="video-js vjs-default-skin" controls preload="auto" width="640" height="360" data-setup='{}'>
+            <source src="http://localhost:8080/live/hello.m3u8" type="application/x-mpegURL">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+
+<!-- Video.js JS and HLS plugin -->
+<script src="https://vjs.zencdn.net/7.8.4/video.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/videojs-contrib-hls@5.15.0/dist/videojs-contrib-hls.js"></script>
+
+<!-- Initialize Video.js -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var player = videojs('my-video');
+        player.play();
+    });
+</script>
