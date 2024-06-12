@@ -26,6 +26,9 @@ This command stops and removes the containers, networks, volumes, and images cre
 After successfully starting the containers using `docker compose up --build`, you can access the SzczurTV application by opening your web browser and navigating to:
 `http://localhost:8080`
 
+
+To start streaming run OBS go to File->Settings->Transmission and then: change service for `Custom...`, set Server for `rtmp://localhost:1935/stream`, set key for `hello`.
+
 ## Code Formatting
 
 Before making any commit, ensure your C# code is properly formatted to pass the formatting checks with the following command:
