@@ -12,8 +12,8 @@ using SzczurApp.Data;
 namespace SzczurApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240506220759_AlteredApplicationUser")]
-    partial class AlteredApplicationUser
+    [Migration("20240621074825_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -1,5 +1,9 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using SzczurApp.Data; // Assuming this namespace contains ApplicationDbContext and ApplicationUser
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using SzczurApp.Data;
+using Xunit;
 
 namespace SzczurTests.Users
 {
@@ -12,7 +16,7 @@ namespace SzczurTests.Users
             {
                 var user = new ApplicationUser
                 {
-                    UserName = "newuser", // Identity uses UserName, not Username
+                    UserName = "newuser",
                     Email = "newuser@example.com",
                     PasswordHash = "securehash"
                 };
@@ -28,14 +32,14 @@ namespace SzczurTests.Users
         [InlineData("username", "", "hash")] // Empty email
         [InlineData("username", "notanemail", "hash")] // Invalid email format
         public void Create_InvalidUser_ShouldFailValidation(
-            string username,
+            string userName,
             string email,
             string password
         )
         {
             var user = new ApplicationUser
             {
-                UserName = username,
+                UserName = userName,
                 Email = email,
                 PasswordHash = password
             };
@@ -47,7 +51,7 @@ namespace SzczurTests.Users
         }
 
         [Fact]
-        public void Read_UserExists_ByUsername_ReturnsCorrectUser()
+        public void Read_UserExists_ByUserName_ReturnsCorrectUser()
         {
             using (var context = CreateContext())
             {
