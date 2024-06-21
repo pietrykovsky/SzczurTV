@@ -33,8 +33,14 @@ var connectionString =
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddScoped<IUserStore<ApplicationUser>, UserStore<ApplicationUser, IdentityRole, ApplicationDbContext>>();
-builder.Services.AddScoped<IUserEmailStore<ApplicationUser>, UserStore<ApplicationUser, IdentityRole, ApplicationDbContext>>();
+builder.Services.AddScoped<
+    IUserStore<ApplicationUser>,
+    UserStore<ApplicationUser, IdentityRole, ApplicationDbContext>
+>();
+builder.Services.AddScoped<
+    IUserEmailStore<ApplicationUser>,
+    UserStore<ApplicationUser, IdentityRole, ApplicationDbContext>
+>();
 builder.Services.AddScoped<SignInManager<ApplicationUser>, UserSignInManager>();
 
 builder
