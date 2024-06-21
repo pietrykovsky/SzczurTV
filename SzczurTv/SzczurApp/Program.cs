@@ -1,59 +1,86 @@
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SzczurApp.Components;
+using SzczurApp.Components.Account;
 using SzczurApp.Data;
 
-internal class Program
-{
-    private static void Main(string[] args)
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<
+    AuthenticationStateProvider,
+    IdentityRevalidatingAuthenticationStateProvider
+>();
+
+builder
+    .Services.AddAuthentication(options =>
     {
-        var builder = WebApplication.CreateBuilder(args);
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddIdentityCookies();
 
-        // Add services to the container.
-        builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+var connectionString =
+    $"Host={builder.Configuration["POSTGRES_HOST"]};Database={builder.Configuration["POSTGRES_DB"]};Username={builder.Configuration["POSTGRES_USER"]};Password={builder.Configuration["POSTGRES_PASSWORD"]}";
 
-        // Configure EF Core with PostgreSQL
-        // Build the connection string from environment variables
-        var connectionString =
-            $"Host={builder.Configuration["POSTGRES_HOST"]};Database={builder.Configuration["POSTGRES_DB"]};Username={builder.Configuration["POSTGRES_USER"]};Password={builder.Configuration["POSTGRES_PASSWORD"]}";
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-        // Add DbContext to the DI container
-        builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(connectionString)
-        );
+builder.Services.AddScoped<
+    IUserStore<ApplicationUser>,
+    UserStore<ApplicationUser, IdentityRole, ApplicationDbContext>
+>();
+builder.Services.AddScoped<
+    IUserEmailStore<ApplicationUser>,
+    UserStore<ApplicationUser, IdentityRole, ApplicationDbContext>
+>();
+builder.Services.AddScoped<SignInManager<ApplicationUser>, UserSignInManager>();
 
-        builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder
+    .Services.AddIdentityCore<ApplicationUser>(options =>
+        options.SignIn.RequireConfirmedAccount = true
+    )
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
 
-        var app = builder.Build();
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-        // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Error", createScopeForErrors: true);
-            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
-        }
-        else
-        {
-            app.UseDeveloperExceptionPage();
-            app.UseMigrationsEndPoint();
+var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseMigrationsEndPoint();
 
-                var context = services.GetRequiredService<ApplicationDbContext>();
-                context.Database.Migrate();
-                DbInitializer.Initialize(context);
-            }
-        }
-
-        app.UseHttpsRedirection();
-
-        app.UseStaticFiles();
-        app.UseAntiforgery();
-
-        app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
-
-        app.Run();
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate(); // Apply migrations automatically
     }
 }
+else
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+
+// Add additional endpoints required by the Identity /Account Razor components.
+app.MapAdditionalIdentityEndpoints();
+
+app.Run();

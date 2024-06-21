@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using SzczurApp.Data;
-
-namespace SzczurTests.Users;
 
 public abstract class UserTestBase : IDisposable
 {
