@@ -13,5 +13,6 @@ namespace SzczurApp.Data
         public override string Email { get; set; } = string.Empty;
 
         // Additional properties can be added here if needed
+        public string? StreamKey { get; set; }
     }
 }
