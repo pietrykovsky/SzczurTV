@@ -24,7 +24,7 @@
                 <ValidationSummary class="text-danger" role="alert" />
                 <div class="form-floating mb-3">
                     <InputText @bind-Value="Input.EmailOrUserName" class="form-control" autocomplete="UserName" aria-required="true" placeholder="name@example.com" />
-                    <label for="emailorUserName" class="form-label">Email or UserName</label>
+                    <label for="emailorUserName" class="form-label">Email or Username</label>
                     <ValidationMessage For="() => Input.EmailOrUserName" class="text-danger" />
                 </div>
                 <div class="form-floating mb-3">
@@ -53,13 +53,6 @@
                     </p>
                 </div>
             </EditForm>
-        </section>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to log in.</h3>
-            <hr />
-            <ExternalLoginPicker />
         </section>
     </div>
 </div>

@@ -1,4 +1,4 @@
-@page "/watch-stream/{userId}"
+@page "/user/{Username}"
 
 @inject StreamingService StreamingService
 @inject NavigationManager NavigationManager
@@ -12,7 +12,6 @@
     preload="auto"
     width="640"
     height="264"
-    poster="MY_VIDEO_POSTER.jpg"
     data-setup="{}"
 >
 <source src="@StreamUrl" type="application/x-mpegURL" />
@@ -28,17 +27,17 @@
 
 @code {
     [Parameter] 
-    public string UserId { get; set; }
+    public string Username { get; set; }
 
     private string StreamUrl;
 
     protected override async Task OnInitializedAsync()
     {
-        if (!string.IsNullOrEmpty(UserId))
+        if (!string.IsNullOrEmpty(Username))
         {
             try
             {
-                StreamUrl = await StreamingService.GetStreamUrlAsync(UserId);
+                StreamUrl = await StreamingService.GetStreamUrlAsync(Username);
             }
             catch (Exception ex)
             {
