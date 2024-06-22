@@ -28,7 +28,7 @@ else
         if (user != null)
         {
             StreamKey = await StreamingService.GenerateStreamKeyAsync(user.Id);
-            StreamUrl = await StreamingService.GetStreamUrlAsync(user.Id);
+            StreamUrl = await StreamingService.GetWatchStreamUrlAsync(user.Id);
         }
     }
 }

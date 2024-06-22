@@ -8,11 +8,13 @@ namespace SzczurApp.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly string _streamingUrl;
+        private readonly string _watchStreamUrl;
 
         public StreamingService(UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             _userManager = userManager;
             _streamingUrl = configuration["StreamingUrl"] ?? throw new Exception("Streaming server URL not configured");
+            _watchStreamUrl = $"{configuration["DomainUrl"]}/watch-stream"
         }
 
         public async Task<string> GenerateStreamKeyAsync(string userId)
@@ -33,6 +35,13 @@ namespace SzczurApp.Services
                 throw new Exception("Stream key not found");
 
             return $"{_streamingUrl}/{user.StreamKey}.m3u8";
+        }
+
+        public async Task<string> GetWatchStreamUrlAsync(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+
+            return $"{_watchStreamUrl}/{user.Id}";
         }
     }
 }

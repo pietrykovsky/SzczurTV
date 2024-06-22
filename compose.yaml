@@ -35,7 +35,9 @@ services:
       - app-network
 
   nginx_rtmp:
-    image: tiangolo/nginx-rtmp:latest
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     container_name: nginx_rtmp
     ports:
       - "1935:1935"  # RTMP port
