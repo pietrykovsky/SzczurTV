@@ -14,15 +14,14 @@ namespace SzczurApp.Migrations
                 name: "StreamKey",
                 table: "AspNetUsers",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "StreamKey",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "StreamKey", table: "AspNetUsers");
         }
     }
 }
