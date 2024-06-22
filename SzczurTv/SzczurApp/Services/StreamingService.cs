@@ -14,7 +14,7 @@ namespace SzczurApp.Services
         {
             _userManager = userManager;
             _streamingUrl = configuration["StreamingUrl"] ?? throw new Exception("Streaming server URL not configured");
-            _watchStreamUrl = $"{configuration["DomainUrl"]}/watch-stream"
+            _watchStreamUrl = $"{configuration["DomainUrl"]}/watch-stream";
         }
 
         public async Task<string> GenerateStreamKeyAsync(string userId)
