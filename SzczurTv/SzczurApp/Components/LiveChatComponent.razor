@@ -49,7 +49,7 @@
         try
         {
             await hubConnection.StartAsync();
-            await hubConnection.SendAsync("JoinRoom", Username);
+            await hubConnection.SendAsync("JoinRoom", Username); // Join chat room
         }
         catch (Exception ex)
         {
@@ -72,11 +72,10 @@
 
         if (!string.IsNullOrEmpty(newMessage))
         {
-            await hubConnection.SendAsync("SendMessage", user, newMessage);
+            await hubConnection.SendAsync("SendMessage", Username, user, newMessage); // Send to specific chat room
             newMessage = string.Empty;
         }
     }
-
 
     private void OnEnter(KeyboardEventArgs e)
     {
@@ -88,7 +87,7 @@
 
     public async ValueTask DisposeAsync()
     {
-        await hubConnection.SendAsync("LeaveRoom", Username);
+        await hubConnection.SendAsync("LeaveRoom", Username); // Leave chat room
         await hubConnection.DisposeAsync();
     }
 }

@@ -5,18 +5,18 @@ namespace SzczurApp;
 
 public class ChatHub : Hub
 {
-    public async Task SendMessage(string user, string message)
+    public async Task SendMessage(string room, string user, string message)
     {
-        await Clients.Group(user).SendAsync("ReceiveMessage", user, message);
+        await Clients.Group(room).SendAsync("ReceiveMessage", user, message);
     }
 
-    public async Task JoinRoom(string username)
+    public async Task JoinRoom(string room)
     {
-        await Groups.AddToGroupAsync(Context.ConnectionId, username);
+        await Groups.AddToGroupAsync(Context.ConnectionId, room);
     }
 
-    public async Task LeaveRoom(string username)
+    public async Task LeaveRoom(string room)
     {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, username);
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, room);
     }
 }
