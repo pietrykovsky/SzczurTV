@@ -49,3 +49,28 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+.messages {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.input-group {
+    margin-top: 10px;
+}
+
+.input-group .form-control {
+    border-radius: 0;
+}
+
+.input-group .btn {
+    border-radius: 0;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+#container-video {
+    max-width: 100%;
+    width:auto;
+    height: auto;
+}

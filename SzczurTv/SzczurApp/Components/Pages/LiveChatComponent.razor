@@ -1,16 +1,27 @@
 ﻿@using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JS
 
-<div class="chat-container">
-    <div class="messages">
-        @foreach (var message in messages)
-        {
-            <div>@message</div>
-        }
+<h3>Chat</h3>
+<div class="flex-grow-1 overflow-auto">
+    <div class="d-flex flex-column h-100">
+        <div class="messages flex-grow-1" id="messagesContainer">
+            @foreach (var message in messages)
+            {
+                <div class="message">
+                    <span class="text-muted">@message.TimeSent.ToShortTimeString()</span>
+                    <span class="font-weight-bold">@message.User</span>: @message.Content
+                </div>
+            }
+        </div>
     </div>
-    <input @bind="newMessage" @onkeypress="@(e => OnEnter(e))" placeholder="Type your message..." />
-    <button @onclick="SendMessage">Send</button>
+</div>
+<div class="input-group mt-3">
+    <input @bind="newMessage" @onkeypress="@(e => OnEnter(e))" placeholder="Type your message..." class="form-control" />
+    <div class="input-group-append">
+        <button @onclick="SendMessage" class="btn btn-primary">Send</button>
+    </div>
 </div>
 
 @code {
@@ -18,9 +29,10 @@
     public string Username { get; set; }
 
     private HubConnection hubConnection;
-    private List<string> messages = new List<string>();
+    private List<ChatMessage> messages = new List<ChatMessage>();
     private string newMessage;
     private bool isConnected => hubConnection?.State == HubConnectionState.Connected;
+    private bool isRendered = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,8 +42,13 @@
 
         hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
         {
-            var encodedMsg = $"{user}: {message}";
-            messages.Add(encodedMsg);
+            var chatMessage = new ChatMessage
+            {
+                User = user,
+                Content = message,
+                TimeSent = DateTime.Now
+            };
+            messages.Add(chatMessage);
             InvokeAsync(StateHasChanged);
         });
 
@@ -89,5 +106,12 @@
     {
         await hubConnection.SendAsync("LeaveRoom", Username); // Leave chat room
         await hubConnection.DisposeAsync();
+    }
+
+    public class ChatMessage
+    {
+        public string User { get; set; }
+        public string Content { get; set; }
+        public DateTime TimeSent { get; set; }
     }
 }
