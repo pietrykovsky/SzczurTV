@@ -1,7 +1,72 @@
 ﻿@page "/"
+@inject StreamingService StreamingService
+<link href="home.css" rel="stylesheet" />
 
-<PageTitle>Home</PageTitle>
+<main>
+    <h3>All Streams</h3>
 
-<h1>Hello, world!</h1>
+    @if (ActiveStreams != null && ActiveStreams.Count > 0)
+    {
+        <div class="main-content">
+            @foreach (var streamUrl in ActiveStreams)
+            {
+                <div class="stream-thumbnail">
+                    <a href="@streamUrl" target="_blank">
+                        <div class="stream-info">
+                            <p>Watch Stream (@GetUserName(streamUrl))</p>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+    else if (StreamUrls == null)
+    {
+        <p>Loading streams...</p>
+    }
+    else
+    {
+        <p>No streams available at the moment.</p>
+    }
+</main>
 
-Welcome to your new app.
+@code {
+    private List<string> StreamUrls;
+    private List<string> ActiveStreams = new List<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            StreamUrls = await StreamingService.GetAllStreamWatchUrlsAsync();
+            if (StreamUrls != null)
+            {
+                foreach (var streamUrl in StreamUrls)
+                {
+                    var userName = ExtractUserNameFromUrl(streamUrl);
+                    if (await StreamingService.IsStreamActiveAsync(userName))
+                    {
+                        ActiveStreams.Add(streamUrl);
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle the error appropriately (e.g., show a message to the user)
+            StreamUrls = new List<string>(); // to prevent null reference issues
+        }
+    }
+
+    private string ExtractUserNameFromUrl(string url)
+    {
+        var uri = new Uri(url);
+        var segments = uri.Segments;
+        return segments.Length > 2 ? segments[2].TrimEnd('/') : string.Empty;
+    }
+
+    private string GetUserName(string url)
+    {
+        return ExtractUserNameFromUrl(url);
+    }
+}
