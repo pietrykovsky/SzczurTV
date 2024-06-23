@@ -28,7 +28,7 @@ namespace SzczurApp.Services
 
         public async Task<string> GenerateStreamKeyAsync(string userName)
         {
-            var user = await _userManager.FindByIdAsync(userName);
+            var user = await _userManager.FindByNameAsync(userName);
             if (user == null)
             {
                 throw new Exception("User not found");
