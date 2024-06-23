@@ -2,12 +2,12 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using SzczurApp.Components;
 using SzczurApp.Components.Account;
 using SzczurApp.Data;
 using SzczurApp.Services;
-using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,21 +62,19 @@ builder.Services.AddSignalR();
 
 builder.Services.AddResponseCompression(opts =>
 {
-   opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-       ["application/octet-stream"]);
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["application/octet-stream"]);
 });
 
 var clientUrl = builder.Configuration["DomainUrl"];
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", builder =>
-    {
-        builder
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .AllowCredentials()
-            .WithOrigins(clientUrl);
-    });
+    options.AddPolicy(
+        "CorsPolicy",
+        builder =>
+        {
+            builder.AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithOrigins(clientUrl);
+        }
+    );
 });
 
 var app = builder.Build();

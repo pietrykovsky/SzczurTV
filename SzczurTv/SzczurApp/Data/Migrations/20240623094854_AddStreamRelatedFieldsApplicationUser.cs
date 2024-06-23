@@ -14,35 +14,32 @@ namespace SzczurApp.Migrations
                 name: "Bio",
                 table: "AspNetUsers",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "StreamCategory",
                 table: "AspNetUsers",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
 
             migrationBuilder.AddColumn<string>(
                 name: "StreamTitle",
                 table: "AspNetUsers",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Bio",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "Bio", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "StreamCategory",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "StreamCategory", table: "AspNetUsers");
 
-            migrationBuilder.DropColumn(
-                name: "StreamTitle",
-                table: "AspNetUsers");
+            migrationBuilder.DropColumn(name: "StreamTitle", table: "AspNetUsers");
         }
     }
 }
