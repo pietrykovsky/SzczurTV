@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using SzczurApp.Data;
 
 namespace SzczurApp.Services

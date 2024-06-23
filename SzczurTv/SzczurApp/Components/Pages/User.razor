@@ -1,43 +1,115 @@
 @page "/user/{Username}"
-
+@rendermode InteractiveServer
 @inject StreamingService StreamingService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<h3>Watch Stream</h3>
-<video
-    id="my-video"
-    class="video-js"
-    controls
-    preload="auto"
-    width="640"
-    height="264"
-    data-setup="{}"
->
-<source src="@StreamUrl" type="application/x-mpegURL" />
-<p class="vjs-no-js">
-    To view this video please enable JavaScript, and consider upgrading to a
-    web browser that
-    <a href="https://videojs.com/html5-video-support/" target="_blank"
-    >supports HTML5 video</a
-    >
-</p>
-</video>
-<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+<div class="container-fluid vh-100">
+    <div class="row h-100">
+        <div class="col-md-9 d-flex flex-column align-items-center">
+            <div class="row flex-grow-1 w-100">
+                <video
+                    id="container-video"
+                    class="video-js w-100 h-100"
+                    controls
+                    preload="auto"
+                    data-setup="{}"
+                >
+                    <source src="@streamUrl" type="application/x-mpegURL" />
+                    <p class="vjs-no-js">
+                        To view this video please enable JavaScript, and consider upgrading to a
+                        web browser that
+                        <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+                    </p>
+                </video>
+                <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+            </div>
+            <div class="row w-100">
+                <div class="col">
+                    <h2>@streamTitle</h2>
+                    <h4>@Username - @streamCategory 
+                        @if (isOwner)
+                        {
+                            <button class="btn btn-primary ml-3" @onclick="ShowEditMenu">Edit</button>
+                        }
+                    </h4>
+                    <p>@userBio</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 d-flex flex-column h-75">
+            <LiveChatComponent Username="@Username" />
+        </div>
+    </div>
+</div>
+
+@if (isOwner)
+{
+    <div class="modal @modalClass" tabindex="-1" role="dialog" style="display:@(isEditMenuVisible ? "block" : "none");">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Stream Info</h5>
+                    <button type="button" class="btn btn-danger" @onclick="HideEditMenu" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="streamTitle">Stream Title</label>
+                        <input type="text" class="form-control" id="streamTitle" @bind="streamTitle" />
+                    </div>
+                    <div class="form-group">
+                        <label for="streamCategory">Stream Category</label>
+                        <select class="form-control" id="streamCategory" @bind="streamCategory">
+                            <option value="Games">Games</option>
+                            <option value="Chat">Chat</option>
+                            <option value="IRL">IRL</option>
+                            <option value="Music">Music</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="userBio">Bio</label>
+                        <textarea class="form-control" id="userBio" @bind="userBio"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="SaveStreamInfo">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter] 
     public string Username { get; set; }
 
-    private string StreamUrl;
+    private string streamUrl;
+    private string streamTitle;
+    private string streamCategory;
+    private string userBio;
+    private bool isOwner = false;
+    private bool isEditMenuVisible = false;
+    private string modalClass = "modal fade"; // Bootstrap modal classes
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var currentUser = authState.User.Identity.Name;
+        isOwner = currentUser == Username;
+
         if (!string.IsNullOrEmpty(Username))
         {
             try
             {
-                StreamUrl = await StreamingService.GetStreamUrlAsync(Username);
+                streamUrl = await StreamingService.GetStreamUrlAsync(Username);
+                var user = await UserManager.FindByNameAsync(Username);
+                streamTitle = user.StreamTitle ?? "Untitled Stream";
+                streamCategory = user.StreamCategory ?? "Uncategorized";
+                userBio = user.Bio ?? "No bio available.";
             }
             catch (Exception ex)
             {
@@ -47,6 +119,31 @@
         else
         {
             NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private void ShowEditMenu()
+    {
+        isEditMenuVisible = true;
+        modalClass = "modal fade show";
+    }
+
+    private void HideEditMenu()
+    {
+        isEditMenuVisible = false;
+        modalClass = "modal fade";
+    }
+
+    private async Task SaveStreamInfo()
+    {
+        var user = await UserManager.FindByNameAsync(Username);
+        if (user != null)
+        {
+            user.StreamTitle = streamTitle;
+            user.StreamCategory = streamCategory;
+            user.Bio = userBio;
+            await UserManager.UpdateAsync(user);
+            HideEditMenu();
         }
     }
 }

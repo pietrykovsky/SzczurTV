@@ -1,0 +1,123 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JS
+
+<h3>Chat</h3>
+<div class="flex-grow-1 overflow-auto">
+    <div class="d-flex flex-column h-100">
+        <div class="messages flex-grow-1" id="messagesContainer">
+            @foreach (var message in messages)
+            {
+                <div class="message">
+                    <span class="text-muted">@message.TimeSent.ToShortTimeString()</span>
+                    <span class="font-weight-bold">@message.User</span>: @message.Content
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div class="input-group mt-3">
+    <input @bind="newMessage" @onkeypress="@(e => OnEnter(e))" placeholder="Type your message..." class="form-control" />
+    <div class="input-group-append">
+        <button @onclick="SendMessage" class="btn btn-primary">Send</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Username { get; set; }
+
+    private HubConnection hubConnection;
+    private List<ChatMessage> messages = new List<ChatMessage>();
+    private string newMessage;
+    private bool isConnected => hubConnection?.State == HubConnectionState.Connected;
+    private bool isRendered = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("http://szczurtv:8080/chatHub"))
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var chatMessage = new ChatMessage
+            {
+                User = user,
+                Content = message,
+                TimeSent = DateTime.Now
+            };
+            messages.Add(chatMessage);
+            InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.Closed += async (error) =>
+        {
+            await Task.Delay(new Random().Next(0, 5) * 1000);
+            await StartConnectionAsync();
+        };
+
+        await StartConnectionAsync();
+    }
+
+    private async Task StartConnectionAsync()
+    {
+        try
+        {
+            await hubConnection.StartAsync();
+            await hubConnection.SendAsync("JoinRoom", Username); // Join chat room
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error starting SignalR connection: " + ex.Message);
+            await Task.Delay(2000);
+            await StartConnectionAsync();
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        if (!isConnected)
+        {
+            Console.WriteLine("Cannot send message, connection is not active.");
+            return;
+        }
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User.Identity;
+
+        if (user == null || !user.IsAuthenticated)
+        {
+            Console.WriteLine("User is not authenticated, cannot send message.");
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(newMessage))
+        {
+            await hubConnection.SendAsync("SendMessage", Username, user.Name, newMessage); // Send to specific chat room
+            newMessage = string.Empty;
+        }
+    }
+
+    private void OnEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            SendMessage();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await hubConnection.SendAsync("LeaveRoom", Username); // Leave chat room
+        await hubConnection.DisposeAsync();
+    }
+
+    public class ChatMessage
+    {
+        public string User { get; set; }
+        public string Content { get; set; }
+        public DateTime TimeSent { get; set; }
+    }
+}

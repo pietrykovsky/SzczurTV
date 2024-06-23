@@ -14,5 +14,8 @@ namespace SzczurApp.Data
 
         // Additional properties can be added here if needed
         public string? StreamKey { get; set; }
+        public string? StreamTitle { get; set; }
+        public string? StreamCategory { get; set; }
+        public string? Bio { get; set; }
     }
 }
