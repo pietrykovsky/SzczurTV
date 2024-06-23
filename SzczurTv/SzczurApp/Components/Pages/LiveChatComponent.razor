@@ -85,11 +85,17 @@
         }
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var user = authState.User.Identity.Name;
+        var user = authState.User.Identity;
+
+        if (user == null || !user.IsAuthenticated)
+        {
+            Console.WriteLine("User is not authenticated, cannot send message.");
+            return;
+        }
 
         if (!string.IsNullOrEmpty(newMessage))
         {
-            await hubConnection.SendAsync("SendMessage", Username, user, newMessage); // Send to specific chat room
+            await hubConnection.SendAsync("SendMessage", Username, user.Name, newMessage); // Send to specific chat room
             newMessage = string.Empty;
         }
     }
