@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SzczurApp.Components;
 using SzczurApp.Components.Account;
 using SzczurApp.Data;
+using SzczurApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddScoped<
     AuthenticationStateProvider,
     IdentityRevalidatingAuthenticationStateProvider
 >();
+
+builder.Services.AddScoped<StreamingService>();
 
 builder
     .Services.AddAuthentication(options =>

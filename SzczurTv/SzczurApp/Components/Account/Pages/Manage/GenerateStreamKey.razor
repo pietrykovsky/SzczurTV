@@ -1,0 +1,45 @@
+﻿@page "/Account/Manage/StreamKey"
+@rendermode InteractiveServer
+
+@using Microsoft.AspNetCore.Authorization
+
+@inject StreamingService StreamingService
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@attribute [Authorize]
+
+<h3>Generate Stream Key</h3>
+
+<p>Your stream key: @StreamKey</p>
+
+<p>Paste this into your streaming software server field: @StreamingService.RTMP_URL</p>
+
+<a href="@StreamUrl" target="_blank">Watch your stream</a>
+
+<button class="btn btn-primary" @onclick="GenerateKey">Generate New Stream Key</button>
+
+
+@code {
+    private string? StreamKey;
+    private string? StreamUrl;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
+        StreamKey = await StreamingService.GetStreamKeyAsync(user.UserName);
+        StreamUrl = await StreamingService.GetWatchStreamUrlAsync(user.UserName);
+    }
+
+    private async Task GenerateKey()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
+        if (user != null)
+        {
+            StreamKey = await StreamingService.GenerateStreamKeyAsync(user.UserName);
+            StreamUrl = await StreamingService.GetWatchStreamUrlAsync(user.UserName);
+        }
+    }
+}
