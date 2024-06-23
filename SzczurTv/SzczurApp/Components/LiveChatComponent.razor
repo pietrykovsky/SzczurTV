@@ -1,0 +1,94 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<div class="chat-container">
+    <div class="messages">
+        @foreach (var message in messages)
+        {
+            <div>@message</div>
+        }
+    </div>
+    <input @bind="newMessage" @onkeypress="@(e => OnEnter(e))" placeholder="Type your message..." />
+    <button @onclick="SendMessage">Send</button>
+</div>
+
+@code {
+    [Parameter]
+    public string Username { get; set; }
+
+    private HubConnection hubConnection;
+    private List<string> messages = new List<string>();
+    private string newMessage;
+    private bool isConnected => hubConnection?.State == HubConnectionState.Connected;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("http://szczurtv:8080/chatHub"))
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            messages.Add(encodedMsg);
+            InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.Closed += async (error) =>
+        {
+            await Task.Delay(new Random().Next(0, 5) * 1000);
+            await StartConnectionAsync();
+        };
+
+        await StartConnectionAsync();
+    }
+
+    private async Task StartConnectionAsync()
+    {
+        try
+        {
+            await hubConnection.StartAsync();
+            await hubConnection.SendAsync("JoinRoom", Username);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error starting SignalR connection: " + ex.Message);
+            await Task.Delay(2000);
+            await StartConnectionAsync();
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        if (!isConnected)
+        {
+            Console.WriteLine("Cannot send message, connection is not active.");
+            return;
+        }
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User.Identity.Name;
+
+        if (!string.IsNullOrEmpty(newMessage))
+        {
+            await hubConnection.SendAsync("SendMessage", user, newMessage);
+            newMessage = string.Empty;
+        }
+    }
+
+
+    private void OnEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            SendMessage();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await hubConnection.SendAsync("LeaveRoom", Username);
+        await hubConnection.DisposeAsync();
+    }
+}

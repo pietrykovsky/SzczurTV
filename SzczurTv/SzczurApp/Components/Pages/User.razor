@@ -1,10 +1,12 @@
 @page "/user/{Username}"
-
+@rendermode InteractiveServer
 @inject StreamingService StreamingService
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JS
+@inject UserManager<ApplicationUser> UserManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
-<h3>Watch Stream</h3>
+<h3>@(isOwner ? "Your Stream" : $"{Username}'s Stream")</h3>
 <video
     id="my-video"
     class="video-js"
@@ -14,30 +16,67 @@
     height="264"
     data-setup="{}"
 >
-<source src="@StreamUrl" type="application/x-mpegURL" />
-<p class="vjs-no-js">
-    To view this video please enable JavaScript, and consider upgrading to a
-    web browser that
-    <a href="https://videojs.com/html5-video-support/" target="_blank"
-    >supports HTML5 video</a
-    >
-</p>
+    <source src="@streamUrl" type="application/x-mpegURL" />
+    <p class="vjs-no-js">
+        To view this video please enable JavaScript, and consider upgrading to a
+        web browser that
+        <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+    </p>
 </video>
 <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+
+<div class="stream-info">
+    @if (isOwner)
+    {
+        <input @bind="streamTitle" placeholder="Stream Title" />
+        <select @bind="streamCategory">
+            <option value="Game">Game</option>
+            <option value="Chat">Chat</option>
+            <option value="IRL">IRL</option>
+            <option value="Music">Music</option>
+            <option value="Education">Education</option>
+        </select>
+        <textarea @bind="userBio" placeholder="Your bio"></textarea>
+        <button @onclick="SaveStreamInfo">Save</button>
+    }
+    else
+    {
+        <h2>@streamTitle</h2>
+        <p>Category: @streamCategory</p>
+        <p>@userBio</p>
+    }
+</div>
+
+<div class="live-chat">
+    <h3>Live Chat</h3>
+    <LiveChatComponent Username="@Username" />
+</div>
 
 @code {
     [Parameter] 
     public string Username { get; set; }
 
-    private string StreamUrl;
+    private string streamUrl;
+    private string streamTitle;
+    private string streamCategory;
+    private string userBio;
+    private bool isOwner = false;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var currentUser = authState.User.Identity.Name;
+        isOwner = currentUser == Username;
+
         if (!string.IsNullOrEmpty(Username))
         {
             try
             {
-                StreamUrl = await StreamingService.GetStreamUrlAsync(Username);
+                streamUrl = await StreamingService.GetStreamUrlAsync(Username);
+                var user = await UserManager.FindByNameAsync(Username);
+                streamTitle = user.StreamTitle ?? "Untitled Stream";
+                streamCategory = user.StreamCategory ?? "Uncategorized";
+                userBio = user.Bio ?? "No bio available.";
             }
             catch (Exception ex)
             {
@@ -47,6 +86,18 @@
         else
         {
             NavigationManager.NavigateTo("/");
+        }
+    }
+
+    private async Task SaveStreamInfo()
+    {
+        var user = await UserManager.FindByNameAsync(Username);
+        if (user != null)
+        {
+            user.StreamTitle = streamTitle;
+            user.StreamCategory = streamCategory;
+            user.Bio = userBio;
+            await UserManager.UpdateAsync(user);
         }
     }
 }
