@@ -111,20 +111,29 @@ namespace SzczurApp.Services
                 if (response.IsSuccessStatusCode)
                 {
                     var contentType = response.Content.Headers.ContentType?.MediaType;
-                    if (contentType == "application/vnd.apple.mpegurl" || contentType == "application/x-mpegURL")
+                    if (
+                        contentType == "application/vnd.apple.mpegurl"
+                        || contentType == "application/x-mpegURL"
+                    )
                     {
-                        Console.WriteLine($"Stream is active and returns a valid m3u8 file: {streamUrl}");
+                        Console.WriteLine(
+                            $"Stream is active and returns a valid m3u8 file: {streamUrl}"
+                        );
                         return true;
                     }
                     else
                     {
-                        Console.WriteLine($"Stream is active but does not return a valid m3u8 file: {streamUrl}. Content-Type: {contentType}");
+                        Console.WriteLine(
+                            $"Stream is active but does not return a valid m3u8 file: {streamUrl}. Content-Type: {contentType}"
+                        );
                         return false;
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"Stream is not active: {streamUrl}. Status code: {response.StatusCode}");
+                    Console.WriteLine(
+                        $"Stream is not active: {streamUrl}. Status code: {response.StatusCode}"
+                    );
                     return false;
                 }
             }
