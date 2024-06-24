@@ -62,11 +62,11 @@ namespace SzczurApp.Services
             return $"{_streamingUrl}/{user.StreamKey}.m3u8";
         }
 
-        public async Task<string> GetStreamUrlContainerAsync(string userName)
+        public async Task<string?> GetStreamUrlContainerAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
             if (user == null || string.IsNullOrEmpty(user.StreamKey))
-                throw new Exception("Stream key not found");
+                return null;
 
             return $"http://nginx_rtmp:8080/hls/{user.StreamKey}.m3u8";
         }
@@ -96,46 +96,35 @@ namespace SzczurApp.Services
         {
             var streamUrl = await GetStreamUrlContainerAsync(userName);
 
+            if (streamUrl == null)
+            {
+                Console.WriteLine($"Stream URL is null for user: {userName}");
+                return false;
+            }
+
             using (var client = new HttpClient())
             {
-                try
+                Console.WriteLine($"Checking stream URL: {streamUrl}");
+
+                var response = await client.GetAsync(streamUrl);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine($"Checking stream URL: {streamUrl}");
-
-                    var response = await client.GetAsync(streamUrl);
-
-                    if (response.IsSuccessStatusCode)
+                    var contentType = response.Content.Headers.ContentType?.MediaType;
+                    if (contentType == "application/vnd.apple.mpegurl" || contentType == "application/x-mpegURL")
                     {
-                        var contentType = response.Content.Headers.ContentType?.MediaType;
-                        if (
-                            contentType == "application/vnd.apple.mpegurl"
-                            || contentType == "application/x-mpegURL"
-                        )
-                        {
-                            Console.WriteLine(
-                                $"Stream is active and returns a valid m3u8 file: {streamUrl}"
-                            );
-                            return true;
-                        }
-                        else
-                        {
-                            Console.WriteLine(
-                                $"Stream is active but does not return a valid m3u8 file: {streamUrl}. Content-Type: {contentType}"
-                            );
-                            return false;
-                        }
+                        Console.WriteLine($"Stream is active and returns a valid m3u8 file: {streamUrl}");
+                        return true;
                     }
                     else
                     {
-                        Console.WriteLine(
-                            $"Stream is not active: {streamUrl}. Status code: {response.StatusCode}"
-                        );
+                        Console.WriteLine($"Stream is active but does not return a valid m3u8 file: {streamUrl}. Content-Type: {contentType}");
                         return false;
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine($"Error checking stream URL {streamUrl}: {ex.Message}");
+                    Console.WriteLine($"Stream is not active: {streamUrl}. Status code: {response.StatusCode}");
                     return false;
                 }
             }
