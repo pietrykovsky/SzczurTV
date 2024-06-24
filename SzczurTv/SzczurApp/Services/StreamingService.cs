@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using SzczurApp.Data;
 
 namespace SzczurApp.Services
@@ -61,11 +62,81 @@ namespace SzczurApp.Services
             return $"{_streamingUrl}/{user.StreamKey}.m3u8";
         }
 
+        public async Task<string?> GetStreamUrlContainerAsync(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            if (user == null || string.IsNullOrEmpty(user.StreamKey))
+                return null;
+
+            return $"http://nginx_rtmp:8080/hls/{user.StreamKey}.m3u8";
+        }
+
         public async Task<string> GetWatchStreamUrlAsync(string userName)
         {
             var user = await _userManager.FindByNameAsync(userName);
 
             return $"{_watchStreamUrl}/{user.UserName}";
+        }
+
+        public async Task<List<string>> GetAllStreamWatchUrlsAsync()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            var watchUrls = new List<string>();
+
+            foreach (var user in users)
+            {
+                var watchStreamUrl = await GetWatchStreamUrlAsync(user.UserName);
+                watchUrls.Add(watchStreamUrl);
+            }
+
+            return watchUrls;
+        }
+
+        public async Task<bool> IsStreamActiveAsync(string userName)
+        {
+            var streamUrl = await GetStreamUrlContainerAsync(userName);
+
+            if (streamUrl == null)
+            {
+                Console.WriteLine($"Stream URL is null for user: {userName}");
+                return false;
+            }
+
+            using (var client = new HttpClient())
+            {
+                Console.WriteLine($"Checking stream URL: {streamUrl}");
+
+                var response = await client.GetAsync(streamUrl);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentType = response.Content.Headers.ContentType?.MediaType;
+                    if (
+                        contentType == "application/vnd.apple.mpegurl"
+                        || contentType == "application/x-mpegURL"
+                    )
+                    {
+                        Console.WriteLine(
+                            $"Stream is active and returns a valid m3u8 file: {streamUrl}"
+                        );
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine(
+                            $"Stream is active but does not return a valid m3u8 file: {streamUrl}. Content-Type: {contentType}"
+                        );
+                        return false;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine(
+                        $"Stream is not active: {streamUrl}. Status code: {response.StatusCode}"
+                    );
+                    return false;
+                }
+            }
         }
     }
 }
